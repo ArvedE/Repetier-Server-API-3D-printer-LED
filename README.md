@@ -9,6 +9,7 @@ For this Project you need:
 ![](header.png)
 
 ## Installation
+Your ESP8266 Board needs a Driver (https://cdn.shopify.com/s/files/1/1509/1638/files/CH34x_Install_Windows_v3_4.zip?1230711729821461142)
 Opne the main.ino in the Arduino IDE and add all Libs we Included.
 Configure your Wifi Settings and Repetier Server API Information like API key and IP.
 Upload the main.ino to the ESP8266 Board with the Arduino IDE.
