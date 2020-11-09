@@ -35,6 +35,7 @@ float extruderTempRead = 0.0;
 float extruderTempSet = 0.0;
 float heatedBedTempRead = 0.0;
 float heatedBedTempSet = 0.0;
+int lightOn = 0;
 
 //Size of JSON we get make it higher if you get an error 
 StaticJsonDocument<1000> doc;
@@ -81,6 +82,7 @@ void loop() {
         }else{
           //Here will come all Printer Actions we want from repetier Server 
           if(printerActions[i] == "stateList"){
+            lightOn = int(doc["Ender3"]["lights"]);
             extruderTempRead = doc["Ender3"]["extruder"][0]["tempRead"];
             extruderTempSet = doc["Ender3"]["extruder"][0]["tempSet"];
             heatedBedTempRead = doc["Ender3"]["heatedBeds"][0]["tempRead"];
@@ -94,29 +96,33 @@ void loop() {
   
       http.end();   //Close connection
     }
-    if(String(job) == "none" && extruderTempSet == 0.0000000000000000 && heatedBedTempSet == 0.0000000000000000){
+    if (lightOn > 0) {
+     if(String(job) == "none" && extruderTempSet == 0.0000000000000000 && heatedBedTempSet == 0.0000000000000000){
 
-      if(extruderTempRead > 50 || heatedBedTempRead > 40){
-        //In here the Printer is in Cooldown mode
-        rgbFade(20,  "blue"); 
-      }else{
-        //the Printer is doing nothing
-        rgbFade(20,  ""); 
-      }
-    }else if(extruderTempSet != 0.0000000000000000 || heatedBedTempSet != 0.0000000000000000){
-      if(heatedBedTempRead < (heatedBedTempSet - 1) || extruderTempRead < (extruderTempSet - 1)){
-        //Printer is heating
-        rgbFade(20,  "red");  
-      }else if(heatedBedTempSet != 0.0000000000000000 || extruderTempSet != 0.0000000000000000){
-        if(String(job) == "none"){
-          //printer finished heating
-          rgbFade(20,  "green"); 
-        }else{
-          //printer is Printing
-          rgbFade(20,  "white"); 
-        }
-      }
-    }
+       if(extruderTempRead > 50 || heatedBedTempRead > 40){
+         //In here the Printer is in Cooldown mode
+         rgbFade(20,  "blue"); 
+       }else{
+         //the Printer is doing nothing
+         rgbFade(20,  ""); 
+       }
+     }else if(extruderTempSet != 0.0000000000000000 || heatedBedTempSet != 0.0000000000000000){
+       if(heatedBedTempRead < (heatedBedTempSet - 1) || extruderTempRead < (extruderTempSet - 1)){
+         //Printer is heating
+         rgbFade(20,  "red");  
+       }else if(heatedBedTempSet != 0.0000000000000000 || extruderTempSet != 0.0000000000000000){
+         if(String(job) == "none"){
+           //printer finished heating
+           rgbFade(20,  "green"); 
+         }else{
+           //printer is Printing
+           rgbFade(20,  "white"); 
+         }
+       }
+     }
+   }
+  }else{
+   colorWipe(strip.Color(0,   0,   0), 50); // Light off
   }
   delay(500);    
 }
